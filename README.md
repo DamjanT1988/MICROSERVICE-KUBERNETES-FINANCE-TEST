@@ -281,6 +281,19 @@ curl.exe -X POST "http://127.0.0.1:8000/trades" `
   -d "{\"instrument\":\"AAPL\",\"side\":\"BUY\",\"quantity\":10,\"price\":170.0}"
 ```
 
+**PowerShell (Windows) - recommended (avoids curl quoting issues)**
+
+```powershell
+$body = @{
+  instrument = "AAPL"
+  side       = "BUY"
+  quantity   = 10
+  price      = 170.0
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8000/trades" -ContentType "application/json" -Body $body
+```
+
 **bash**
 
 ```bash
