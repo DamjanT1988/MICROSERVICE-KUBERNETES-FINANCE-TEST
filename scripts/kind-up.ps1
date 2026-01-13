@@ -40,8 +40,22 @@ Assert-LastExitCode "kind load pricing-service"
 Assert-LastExitCode "kind load risk-worker"
 
 Write-Host "[kind-up] deploying k8s manifests"
-& kubectl --context $KUBE_CONTEXT apply -f k8s/
-Assert-LastExitCode "kubectl apply"
+# Apply in a deterministic order (avoids directory-walk ordering issues)
+& kubectl --context $KUBE_CONTEXT apply -f k8s/namespace.yaml
+Assert-LastExitCode "kubectl apply namespace"
+
+& kubectl --context $KUBE_CONTEXT apply -f k8s/secrets.example.yaml -f k8s/configmap.yaml
+Assert-LastExitCode "kubectl apply secrets/configmap"
+
+& kubectl --context $KUBE_CONTEXT apply -f k8s/postgres.yaml -f k8s/redis.yaml
+Assert-LastExitCode "kubectl apply postgres/redis"
+
+& kubectl --context $KUBE_CONTEXT apply -f k8s/pricing.yaml -f k8s/trade-api.yaml -f k8s/risk-worker.yaml
+Assert-LastExitCode "kubectl apply app deployments"
+
+# Optional extras (safe to create even if controllers aren't installed)
+& kubectl --context $KUBE_CONTEXT apply -f k8s/hpa-risk-worker.yaml -f k8s/ingress.yaml
+Assert-LastExitCode "kubectl apply optional extras"
 
 Write-Host "[kind-up] waiting for pods"
 & kubectl --context $KUBE_CONTEXT -n $NAMESPACE rollout status deploy/postgres --timeout=180s
