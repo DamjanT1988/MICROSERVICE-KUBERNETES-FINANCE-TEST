@@ -169,6 +169,26 @@ After the script finishes, port-forward the API:
 kubectl -n trade-risk-pnl port-forward svc/trade-api 8000:8000
 ```
 
+### Troubleshooting (Windows + Kind)
+
+If `.\scripts\kind-up.ps1` fails with errors like **“kubelet is not healthy”** during cluster creation:
+
+- **Docker Desktop must be in Linux containers mode** (Kind runs Kubernetes-in-Docker on Linux).
+- **Enable WSL2 backend** in Docker Desktop (recommended).
+- **Increase Docker resources** (CPU/RAM) and try again.
+- **Fallback**: use k3d (often more forgiving on Windows):
+
+```powershell
+.\scripts\k3d-up.ps1
+```
+
+You can also pin the Kind node image (if a specific K8s version is problematic):
+
+```powershell
+$env:KIND_NODE_IMAGE="kindest/node:v1.34.2"
+.\scripts\kind-up.ps1
+```
+
 ---
 
 ### Option A: Kind
