@@ -1,0 +1,21 @@
+# Optional ingress. Requires an ingress controller such as ingress-nginx installed.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: trade-api-ingress
+  namespace: trade-risk-pnl
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: trade-risk-pnl.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: trade-api
+                port:
+                  number: 8000
+
+

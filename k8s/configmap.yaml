@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trade-risk-pnl-config
+  namespace: trade-risk-pnl
+data:
+  TRADE_QUEUE_NAME: "trade_queue"
+  REDIS_URL: "redis://redis:6379/0"
+  PRICING_URL: "http://pricing-service:8001"
+  # Optional override for pricing-service. Must be valid JSON.
+  # PRICE_MAP_JSON: '{"AAPL": 180.0, "MSFT": 420.0}'
+
+

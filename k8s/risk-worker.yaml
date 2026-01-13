@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: risk-worker
+  namespace: trade-risk-pnl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: risk-worker
+  template:
+    metadata:
+      labels:
+        app: risk-worker
+    spec:
+      containers:
+        - name: risk-worker
+          image: risk-worker:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: trade-risk-pnl-secrets
+                  key: DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: trade-risk-pnl-config
+                  key: REDIS_URL
+            - name: PRICING_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: trade-risk-pnl-config
+                  key: PRICING_URL
+            - name: TRADE_QUEUE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: trade-risk-pnl-config
+                  key: TRADE_QUEUE_NAME
+            - name: ERROR_SLEEP_SECONDS
+              value: "1.0"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+
+
